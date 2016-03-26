@@ -1,9 +1,17 @@
+if (!/(&|\?)username=/.test(window.location.search)) {
+  var newSearch = window.location.search;
+  if (newSearch !== '' & newSearch !== '?') {
+    newSearch += '&';
+  }
+  newSearch += 'username=' + (prompt('What is your name?') || 'anonymous');
+  window.location.search = newSearch;
+}
 
 var app = {
 
   //TODO: The current 'addFriend' function just adds the class 'friend'
   //to all messages sent by the user
-  server: 'https://api.parse.com/1/classes/messages/',
+  server: 'http://127.0.0.1:3000/classes/messages',
   username: 'anonymous',
   roomname: 'lobby',
   lastMessageId: 0,
@@ -59,26 +67,27 @@ var app = {
       url: app.server,
       type: 'GET',
       contentType: 'application/json',
-      data: { order: '-createdAt'},
       success: function(data) {
         // Don't bother if we have nothing to work with
-        if (!data.results || !data.results.length) { return; }
+        console.log(data);
+        if (!data.results || !data.results.length) { 
+          app.stopSpinner();
+          return; 
+        }
 
         // Get the last message
         var mostRecentMessage = data.results[data.results.length - 1];
         var displayedRoom = $('.chat span').first().data('roomname');
         app.stopSpinner();
-        // Only bother updating the DOM if we have a new message
-        if (mostRecentMessage.objectId !== app.lastMessageId || app.roomname !== displayedRoom) {
-          // Update the UI with the fetched rooms
-          app.populateRooms(data.results);
+      // Only bother updating the DOM if we have a new message
+        // Update the UI with the fetched rooms
+        app.populateRooms(data.results);
 
-          // Update the UI with the fetched messages
-          app.populateMessages(data.results, animate);
+        // Update the UI with the fetched messages
+        app.populateMessages(data.results, animate);
 
-          // Store the ID of the most recent message
-          app.lastMessageId = mostRecentMessage.objectId;
-        }
+        // Store the ID of the most recent message
+        app.lastMessageId = mostRecentMessage.objectId;
       },
       error: function(data) {
         console.error('chatterbox: Failed to fetch messages');
@@ -153,7 +162,7 @@ var app = {
       // Add in the message data using DOM methods to avoid XSS
       // Store the username in the element's data
       var $username = $('<span class="username"/>');
-      $username.text(data.username + ': ').attr('data-username', data.username).attr('data-roomname', data.roomname).appendTo($chat);
+      $username.text(data.user + ': ').attr('data-username', data.user).attr('data-roomname', data.roomname).appendTo($chat);
 
       // Add the friend class
       if (app.friends[data.username] === true) {
@@ -161,7 +170,7 @@ var app = {
       }
 
       var $message = $('<br><span/>');
-      $message.text(data.text).appendTo($chat);
+      $message.text(data.message).appendTo($chat);
 
       // Add the message to the UI
       app.$chats.append($chat);
@@ -213,9 +222,9 @@ var app = {
 
   handleSubmit: function(evt) {
     var message = {
-      username: app.username,
+      username: 'Steve',
       text: app.$message.val(),
-      roomname: app.roomname || 'lobby'
+      roomname: 'lobby'
     };
 
     app.send(message);
@@ -234,4 +243,3 @@ var app = {
     $('form input[type=submit]').attr('disabled', null);
   }
 };
-

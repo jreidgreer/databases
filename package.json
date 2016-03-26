@@ -12,7 +12,7 @@
     "sequelize": "^2.0.6"
   },
   "scripts": {
-    "start": "node ./server/app.js",
+    "start": "nodemon --debug ./server/app.js",
     "test": "mocha server/spec/server-spec.js; RES=$?; kill %1; exit $RES",
     "postinstall": "curl -s https://raw.githubusercontent.com/hackreactor-labs/pomander/master/bin/install | bash",
     "lint": "eslint ./"

@@ -26,6 +26,26 @@
         <input type="text" name="message" id="message"/>
         <input type="submit" name="submit" class="submit"/>
       </form>
+    <a id="optionsLink" href="#">Options</a>
+    <div id="options">
+    Background Color: 
+      <select id="fontColor">
+      <option value="Black">Black</option>
+      <option value="Red">Red</option>
+      <option value="Green">Green</option>
+      <option value="Blue">Blue</option>
+      <option value="Teal">Teal</option>
+      </select>
+    Font Color: 
+      <select id="fontColor">
+      <option value="Black">Black</option>
+      <option value="Red">Red</option>
+      <option value="Green">Green</option>
+      <option value="Blue">Blue</option>
+      <option value="Teal">Teal</option>
+      </select>
+      <button value="saveSettings">Save Settings</button>
+    </div>
     </div>
     <div id="chats"></div>
 
@@ -33,5 +53,5 @@
       $(function(){
         app.init()
       });
-    </script>  </body>
+    </script> </body>
 </html>

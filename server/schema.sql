@@ -16,6 +16,11 @@ CREATE TABLE users (
   PRIMARY KEY (id)
   );
 
+CREATE TABLE userStyles (
+  id int NOT NULL AUTO_INCREMENT
+
+
+  )
 -- CREATE TABLE rooms (
 --   id int NOT NULL AUTO_INCREMENT,
 --   roomname varchar(20) NOT NULL,

@@ -1,12 +1,3 @@
-if (!/(&|\?)username=/.test(window.location.search)) {
-  var newSearch = window.location.search;
-  if (newSearch !== '' & newSearch !== '?') {
-    newSearch += '&';
-  }
-  newSearch += 'username=' + (prompt('What is your name?') || 'anonymous');
-  window.location.search = newSearch;
-}
-
 var app = {
 
   //TODO: The current 'addFriend' function just adds the class 'friend'
@@ -19,7 +10,12 @@ var app = {
 
   init: function() {
     // Get username
-    app.username = window.location.search.substr(10);
+    app.username = prompt('What is your name?') || 'anonymous';
+    app.setUser(app.username);
+    app.settings = {
+      fontColor: 'Black',
+      backgroundColor: 'Default'
+    };
 
     // Cache jQuery selectors
     app.$main = $('#main');
@@ -27,11 +23,16 @@ var app = {
     app.$chats = $('#chats');
     app.$roomSelect = $('#roomSelect');
     app.$send = $('#send');
+    app.$optionsLink = $('#optionsLink');
+    app.$options = $('#options');
 
     // Add listeners
     app.$chats.on('click', '.username', app.addFriend);
     app.$send.on('submit', app.handleSubmit);
     app.$roomSelect.on('change', app.saveRoom);
+    app.$optionsLink.on('click', function() {
+      app.$options.slideToggle(200);
+    });
 
     // Fetch previous messages
     app.startSpinner();
@@ -39,6 +40,44 @@ var app = {
 
     // Poll for new messages
     setInterval(app.fetch, 3000);
+  },
+
+  setUser: function(user) {
+    var findUser = function(user) {
+      $.ajax({
+        url: 'http://127.0.0.1:3000/classes/users',
+        type: 'GET',
+        data: {username: user},
+        contentType: 'application/json',
+        success: function(data) {
+          if (data.results.length === 0) {
+            sendUser(user);
+          } else {
+            console.log('User Already Present.');
+          }
+        },
+        error: function(data) {
+          console.error('Cannot fetch username.', data);
+        }
+      });
+    };
+
+    var sendUser = function(user) {
+      $.ajax({
+        url: 'http://127.0.0.1:3000/classes/users',
+        type: 'POST',
+        data: JSON.stringify({username: user}),
+        contentType: 'application/json',
+        success: function(addSuccess) {
+          console.log('Added username');
+        }, 
+        error: function(addError) {
+          console.error('Unable to add user', addError);
+        }
+      });
+    };
+
+    findUser(user);
   },
 
   send: function(data) {
@@ -222,7 +261,7 @@ var app = {
 
   handleSubmit: function(evt) {
     var message = {
-      username: 'Steve',
+      username: app.username,
       text: app.$message.val(),
       roomname: 'lobby'
     };

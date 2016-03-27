@@ -30,7 +30,8 @@ module.exports = {
   users: {
     // Ditto as above
     get: function (req, res) {
-      models.users.get(function(err, data) {
+      var sentData = req.query;
+      models.users.get(sentData, function(err, data) {
         if (err) {
           console.error('You done messed up.', err);
         } else {

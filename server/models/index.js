@@ -20,8 +20,15 @@ module.exports = {
 
   users: {
     // Ditto as above.
-    get: function (callback) {
-      db.queryDB('SELECT user FROM users', function(err, data) {
+    get: function (sentData, callback) {
+      console.log('Received from users get', sentData);
+      var query = 'SELECT username FROM users';
+
+      if (sentData.username) {
+        query += ' WHERE username="' + sentData.username + '"';
+      }
+
+      db.queryDB(query, function(err, data) {
         callback(err, data);
       });
     },
